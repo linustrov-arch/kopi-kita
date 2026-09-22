@@ -1,15 +1,11 @@
 "use client";
 
 import { useState } from "react";
-
-type Ringkasan = {
-  nama: string;
-  whatsapp: string;
-  tanggal: string;
-  jam: string;
-  orang: string;
-  catatan: string;
-};
+import {
+  BOOKING_KOSONG,
+  validateBooking,
+  type BookingInput,
+} from "@/lib/booking-validation";
 
 const JAM = Array.from(
   { length: 12 },
@@ -17,7 +13,7 @@ const JAM = Array.from(
 );
 
 const inputClass =
-  "w-full rounded-2xl border border-garis bg-krem-muda px-4 py-3 text-base text-coklat outline-none transition-colors focus:border-aksen";
+  "w-full rounded-2xl border bg-krem-muda px-4 py-3 text-base text-coklat outline-none transition-colors";
 
 const labelClass = "block text-sm font-medium text-coklat";
 
@@ -31,14 +27,50 @@ const formatTanggal = (tanggal: string) =>
     year: "numeric",
   });
 
+function PesanError({ id, pesan }: { id: string; pesan?: string }) {
+  if (!pesan) return null;
+  return (
+    <p id={id} role="alert" className="mt-1.5 text-sm text-merah">
+      {pesan}
+    </p>
+  );
+}
+
 export function BookingForm() {
-  const [hasil, setHasil] = useState<Ringkasan | null>(null);
+  const [nilai, setNilai] = useState<BookingInput>(BOOKING_KOSONG);
+  const [disentuh, setDisentuh] = useState<Partial<Record<string, boolean>>>({});
+  const [hasil, setHasil] = useState<BookingInput | null>(null);
+
+  const errors = validateBooking(nilai);
+  const valid = Object.keys(errors).length === 0;
+
+  const ubah = (field: keyof BookingInput) => (v: string) =>
+    setNilai((s) => ({ ...s, [field]: v }));
+
+  const tandai = (field: keyof BookingInput) => () =>
+    setDisentuh((s) => ({ ...s, [field]: true }));
+
+  const pesanError = (field: keyof BookingInput) =>
+    disentuh[field] ? errors[field] : undefined;
+
+  const kelasInput = (field: keyof BookingInput) =>
+    `${inputClass} mt-2 ${
+      pesanError(field)
+        ? "border-merah focus:border-merah"
+        : "border-garis focus:border-aksen"
+    }`;
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!valid) return;
     // ponytail: mock, data cuma ditahan di state, tidak dikirim ke mana pun
-    const data = new FormData(e.currentTarget);
-    setHasil(Object.fromEntries(data) as Ringkasan);
+    setHasil(nilai);
+  }
+
+  function ulang() {
+    setNilai(BOOKING_KOSONG);
+    setDisentuh({});
+    setHasil(null);
   }
 
   if (hasil) {
@@ -77,7 +109,7 @@ export function BookingForm() {
 
         <button
           type="button"
-          onClick={() => setHasil(null)}
+          onClick={ulang}
           className="mt-7 rounded-full bg-coklat px-7 py-3.5 text-sm font-semibold text-krem transition-opacity hover:opacity-90"
         >
           Buat Booking Baru
@@ -86,8 +118,14 @@ export function BookingForm() {
     );
   }
 
+  const aria = (field: keyof BookingInput) => ({
+    "aria-invalid": pesanError(field) ? true : undefined,
+    "aria-describedby": pesanError(field) ? `${field}-error` : undefined,
+  });
+
   return (
     <form
+      noValidate
       onSubmit={handleSubmit}
       className="rounded-3xl border border-garis bg-krem-muda p-6 sm:p-8"
     >
@@ -98,12 +136,15 @@ export function BookingForm() {
           </label>
           <input
             id="nama"
-            name="nama"
             type="text"
-            required
             autoComplete="name"
-            className={`${inputClass} mt-2`}
+            value={nilai.nama}
+            onChange={(e) => ubah("nama")(e.target.value)}
+            onBlur={tandai("nama")}
+            className={kelasInput("nama")}
+            {...aria("nama")}
           />
+          <PesanError id="nama-error" pesan={pesanError("nama")} />
         </div>
 
         <div className="sm:col-span-2">
@@ -112,13 +153,17 @@ export function BookingForm() {
           </label>
           <input
             id="whatsapp"
-            name="whatsapp"
             type="text"
-            inputMode="tel"
-            required
+            inputMode="numeric"
             autoComplete="tel"
-            className={`${inputClass} mt-2`}
+            placeholder="081234567890"
+            value={nilai.whatsapp}
+            onChange={(e) => ubah("whatsapp")(e.target.value)}
+            onBlur={tandai("whatsapp")}
+            className={kelasInput("whatsapp")}
+            {...aria("whatsapp")}
           />
+          <PesanError id="whatsapp-error" pesan={pesanError("whatsapp")} />
         </div>
 
         <div>
@@ -127,11 +172,14 @@ export function BookingForm() {
           </label>
           <input
             id="tanggal"
-            name="tanggal"
             type="date"
-            required
-            className={`${inputClass} mt-2`}
+            value={nilai.tanggal}
+            onChange={(e) => ubah("tanggal")(e.target.value)}
+            onBlur={tandai("tanggal")}
+            className={kelasInput("tanggal")}
+            {...aria("tanggal")}
           />
+          <PesanError id="tanggal-error" pesan={pesanError("tanggal")} />
         </div>
 
         <div>
@@ -140,10 +188,11 @@ export function BookingForm() {
           </label>
           <select
             id="jam"
-            name="jam"
-            required
-            defaultValue=""
-            className={`${inputClass} mt-2`}
+            value={nilai.jam}
+            onChange={(e) => ubah("jam")(e.target.value)}
+            onBlur={tandai("jam")}
+            className={kelasInput("jam")}
+            {...aria("jam")}
           >
             <option value="" disabled>
               Pilih jam
@@ -154,6 +203,7 @@ export function BookingForm() {
               </option>
             ))}
           </select>
+          <PesanError id="jam-error" pesan={pesanError("jam")} />
         </div>
 
         <div>
@@ -162,14 +212,16 @@ export function BookingForm() {
           </label>
           <input
             id="orang"
-            name="orang"
             type="number"
             min={1}
             max={8}
-            defaultValue={2}
-            required
-            className={`${inputClass} mt-2`}
+            value={nilai.orang}
+            onChange={(e) => ubah("orang")(e.target.value)}
+            onBlur={tandai("orang")}
+            className={kelasInput("orang")}
+            {...aria("orang")}
           />
+          <PesanError id="orang-error" pesan={pesanError("orang")} />
         </div>
 
         <div className="sm:col-span-2">
@@ -179,16 +231,18 @@ export function BookingForm() {
           </label>
           <textarea
             id="catatan"
-            name="catatan"
             rows={4}
-            className={`${inputClass} mt-2 resize-y`}
+            value={nilai.catatan}
+            onChange={(e) => ubah("catatan")(e.target.value)}
+            className={`${inputClass} mt-2 resize-y border-garis focus:border-aksen`}
           />
         </div>
       </div>
 
       <button
         type="submit"
-        className="mt-7 rounded-full bg-coklat px-7 py-3.5 text-sm font-semibold text-krem transition-opacity hover:opacity-90"
+        disabled={!valid}
+        className="mt-7 rounded-full bg-coklat px-7 py-3.5 text-sm font-semibold text-krem transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         Booking Sekarang
       </button>
