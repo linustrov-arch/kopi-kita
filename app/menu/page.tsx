@@ -1,20 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { KartuProduk } from "@/app/components/kartu-produk";
-import { KATEGORI, menu, type Kategori } from "@/lib/menu-data";
+import { ProductCard } from "@/components/product-card";
+import { CATEGORY_LABEL, products, type Category } from "@/lib/menu-data";
 
-type Filter = Kategori | "Semua";
+type Tab = Category | "semua";
 
-const FILTER: Filter[] = ["Semua", ...KATEGORI];
+const TABS: Tab[] = ["semua", "kopi", "non-kopi", "pastry"];
+
+const labelTab = (t: Tab) => (t === "semua" ? "Semua" : CATEGORY_LABEL[t]);
 
 export default function MenuPage() {
-  const [aktif, setAktif] = useState<Filter>("Semua");
+  const [aktif, setAktif] = useState<Tab>("semua");
   const tampil =
-    aktif === "Semua" ? menu : menu.filter((p) => p.kategori === aktif);
+    aktif === "semua" ? products : products.filter((p) => p.category === aktif);
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+    <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-12 sm:px-8 sm:py-16">
       <header className="max-w-lg">
         <p className="text-sm font-medium tracking-[0.2em] text-aksen uppercase">
           Kopi Kita
@@ -28,27 +30,32 @@ export default function MenuPage() {
         </p>
       </header>
 
-      <div className="mt-10 flex flex-wrap gap-2.5">
-        {FILTER.map((f) => (
+      <div
+        role="tablist"
+        aria-label="Filter kategori"
+        className="mt-10 flex flex-wrap gap-1 border-b border-garis"
+      >
+        {TABS.map((t) => (
           <button
-            key={f}
+            key={t}
             type="button"
-            onClick={() => setAktif(f)}
-            aria-pressed={aktif === f}
-            className={`rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
-              aktif === f
-                ? "bg-coklat text-krem"
-                : "border border-garis bg-krem-muda text-coklat-muda hover:border-coklat-muda hover:text-coklat"
+            role="tab"
+            aria-selected={aktif === t}
+            onClick={() => setAktif(t)}
+            className={`-mb-px border-b-2 px-4 py-3 text-sm font-medium transition-colors sm:px-5 ${
+              aktif === t
+                ? "border-aksen text-coklat"
+                : "border-transparent text-coklat-muda hover:text-coklat"
             }`}
           >
-            {f}
+            {labelTab(t)}
           </button>
         ))}
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-6">
         {tampil.map((p) => (
-          <KartuProduk key={p.id} produk={p} />
+          <ProductCard key={p.id} product={p} />
         ))}
       </div>
     </main>

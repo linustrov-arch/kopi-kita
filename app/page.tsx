@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { KartuProduk } from "@/app/components/kartu-produk";
+import { ProductCard } from "@/components/product-card";
 import { favorit } from "@/lib/menu-data";
 
 const ALAMAT = ["Jl. Melati No. 12", "Kebayoran Baru, Jakarta Selatan 12160"];
@@ -75,7 +75,7 @@ export default function Home() {
           </div>
           <div className="mt-8 grid gap-5 sm:grid-cols-3 sm:gap-6">
             {favorit.map((p) => (
-              <KartuProduk key={p.id} produk={p} />
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </section>

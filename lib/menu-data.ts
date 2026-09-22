@@ -1,81 +1,98 @@
-export type Kategori = "Kopi" | "Non-Kopi" | "Pastry";
+export type Category = "kopi" | "non-kopi" | "pastry";
 
-export type Produk = {
-  id: string;
-  nama: string;
-  deskripsi: string;
-  harga: number;
-  kategori: Kategori;
-  // ponytail: emoji jadi placeholder foto, ganti dengan <Image> saat foto asli siap
-  emoji: string;
+export type Product = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  category: Category;
+  image: string;
+  available: boolean;
 };
 
-export const KATEGORI: Kategori[] = ["Kopi", "Non-Kopi", "Pastry"];
+export const CATEGORY_LABEL: Record<Category, string> = {
+  kopi: "Kopi",
+  "non-kopi": "Non-Kopi",
+  pastry: "Pastry",
+};
 
-export const menu: Produk[] = [
+export const products: Product[] = [
   {
-    id: "espresso",
-    nama: "Espresso",
-    deskripsi: "Sari kopi pekat dalam satu tegukan singkat.",
-    harga: 22000,
-    kategori: "Kopi",
-    emoji: "☕",
+    id: 1,
+    name: "Kopi Susu Kita",
+    description:
+      "Racikan andalan kami: espresso, susu segar, dan manis yang pas bikin nagih.",
+    price: 22000,
+    category: "kopi",
+    image: "/images/menu/kopi-susu-kita.svg",
+    available: true,
   },
   {
-    id: "kopi-susu-gula-aren",
-    nama: "Kopi Susu Gula Aren",
-    deskripsi: "Espresso, susu segar, dan manis legit gula aren.",
-    harga: 28000,
-    kategori: "Kopi",
-    emoji: "🥤",
+    id: 2,
+    name: "Americano",
+    description:
+      "Hitam bersih dengan aroma yang langsung membangunkan pagimu.",
+    price: 20000,
+    category: "kopi",
+    image: "/images/menu/americano.svg",
+    available: true,
   },
   {
-    id: "caffe-latte",
-    nama: "Caffè Latte",
-    deskripsi: "Espresso lembut dengan susu steam dan busa tipis.",
-    harga: 32000,
-    kategori: "Kopi",
-    emoji: "🍶",
+    id: 3,
+    name: "Es Kopi Gula Aren",
+    description:
+      "Manis legit gula aren yang lumer pelan di antara es dan kopi pekat.",
+    price: 25000,
+    category: "kopi",
+    image: "/images/menu/es-kopi-gula-aren.svg",
+    available: true,
   },
   {
-    id: "cold-brew",
-    nama: "Cold Brew",
-    deskripsi: "Diseduh dingin dua belas jam, ringan dan rendah asam.",
-    harga: 35000,
-    kategori: "Kopi",
-    emoji: "🧊",
+    id: 4,
+    name: "Matcha Latte",
+    description:
+      "Matcha Jepang yang creamy dengan sisa rasa manis yang lembut di lidah.",
+    price: 30000,
+    category: "non-kopi",
+    image: "/images/menu/matcha-latte.svg",
+    available: true,
   },
   {
-    id: "cokelat-panas",
-    nama: "Cokelat Panas",
-    deskripsi: "Cokelat pekat yang diaduk dengan susu hangat.",
-    harga: 30000,
-    kategori: "Non-Kopi",
-    emoji: "🍫",
+    id: 5,
+    name: "Coklat Panas",
+    description: "Coklat pekat yang meleleh hangat sampai ke dada.",
+    price: 26000,
+    category: "non-kopi",
+    image: "/images/menu/coklat-panas.svg",
+    available: true,
   },
   {
-    id: "teh-tarik",
-    nama: "Teh Tarik",
-    deskripsi: "Teh hitam pekat yang ditarik hingga berbusa.",
-    harga: 25000,
-    kategori: "Non-Kopi",
-    emoji: "🫖",
+    id: 6,
+    name: "Croissant",
+    description: "Berlapis mentega, renyah di luar, lembut begitu digigit.",
+    price: 28000,
+    category: "pastry",
+    image: "/images/menu/croissant.svg",
+    available: true,
   },
   {
-    id: "croissant-mentega",
-    nama: "Croissant Mentega",
-    deskripsi: "Berlapis renyah dengan aroma mentega yang tebal.",
-    harga: 27000,
-    kategori: "Pastry",
-    emoji: "🥐",
+    id: 7,
+    name: "Roti Bakar Keju",
+    description: "Keju leleh di atas roti panggang yang masih mengepul.",
+    price: 18000,
+    category: "pastry",
+    image: "/images/menu/roti-bakar-keju.svg",
+    available: true,
   },
   {
-    id: "pain-au-chocolat",
-    nama: "Pain au Chocolat",
-    deskripsi: "Pastry berlapis dengan batang cokelat hitam di dalamnya.",
-    harga: 30000,
-    kategori: "Pastry",
-    emoji: "🥧",
+    id: 8,
+    name: "Banana Bread",
+    description:
+      "Pisang matang dan kayu manis yang memenuhi ruangan saat baru keluar oven.",
+    price: 15000,
+    category: "pastry",
+    image: "/images/menu/banana-bread.svg",
+    available: false,
   },
 ];
 
@@ -85,8 +102,8 @@ const rupiah = new Intl.NumberFormat("id-ID", {
   maximumFractionDigits: 0,
 });
 
-export const formatHarga = (harga: number) => rupiah.format(harga);
+export const formatHarga = (price: number) => rupiah.format(price);
 
-const ID_FAVORIT = ["kopi-susu-gula-aren", "cold-brew", "croissant-mentega"];
+const ID_FAVORIT = [1, 3, 6];
 
-export const favorit = menu.filter((p) => ID_FAVORIT.includes(p.id));
+export const favorit = products.filter((p) => ID_FAVORIT.includes(p.id));
