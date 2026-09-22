@@ -18,6 +18,19 @@ Halaman admin untuk mengelola isi website:
 - Tambah, ubah, dan hapus produk menu
 - Lihat dan ubah status booking yang masuk
 
+## Menjalankan
+
+```bash
+npm install
+npm run dev
+```
+
+Buka http://localhost:3000
+
+## Teknologi
+
+Next.js (App Router), TypeScript, Tailwind CSS.
+
 ## Status
 
-Tahap awal. Belum ada kode aplikasi, baru deskripsi proyek.
+Tahap awal. Baru kerangka Next.js, fitur belum diimplementasi.
